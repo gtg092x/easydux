@@ -1,0 +1,15 @@
+{
+  "presets": [
+    ["@babel/env", {
+      "targets": {
+        "node": "6.10"
+      }
+    }]
+  ],
+  "plugins": [
+    "@babel/plugin-proposal-export-default-from"
+  ],
+  "ignore": [
+    "node_modules"
+  ]
+}
