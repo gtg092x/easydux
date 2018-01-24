@@ -2,7 +2,7 @@ import keys from 'lodash/keys';
 import assign from 'lodash/assign';
 import isObject from 'lodash/isObject';
 
-export default function mergeDepth(depth, target, ...sources) {
+export default function assignDepth(depth, target, ...sources) {
   if (isObject(target)) {
     sources.forEach((source) => {
       if (isObject(source)) {
@@ -13,7 +13,7 @@ export default function mergeDepth(depth, target, ...sources) {
                 assign(target, { [key]: source[key] });
               } else {
                 // eslint-disable-next-line no-param-reassign
-                target[key] = mergeDepth(depth - 1, target[key], source[key]);
+                target[key] = assignDepth(depth - 1, target[key], source[key]);
               }
             } else {
               assign(target, { [key]: source[key] });

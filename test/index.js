@@ -27,6 +27,32 @@ const selectObject = state => state.object;
 const selectArray = state => state.array;
 
 describe('easy dux it.', () => {
+  it('arrays should work', () => {
+    let result;
+    const store = createStore(reducer);
+    store.dispatch({
+      type: SET_ARRAY,
+      data: [1, 2, 3],
+    });
+    result = selectArray(store.getState());
+    assert.equal(result[0], 1);
+
+    store.dispatch({
+      type: SET_ARRAY,
+      uniq: true,
+      data: [1, 1, 3],
+    });
+    result = selectArray(store.getState());
+    assert.equal(result[1], 3);
+
+    store.dispatch({
+      type: SET_ARRAY,
+      compact: true,
+      data: [null, 3],
+    });
+    result = selectArray(store.getState());
+    assert.equal(result[0], 3);
+  });
   it('objects should work', () => {
     let result;
     const store = createStore(reducer);

@@ -3,7 +3,8 @@ import isArray from 'lodash/isArray';
 import isFunction from 'lodash/isFunction';
 import omit from 'lodash/omit';
 import get from 'lodash/get';
-import mergeDepth from './merge';
+import merge from 'lodash/merge';
+import assignDepth from './assign';
 
 /**
  * Returns object with only `keyArray` value set to data
@@ -17,13 +18,16 @@ function placeDataAtKey(data, keyArray) {
 export default (actionTypes, defaultValue = {}) =>
   (state = defaultValue, action) => {
     switch (action.type) {
+      case actionTypes.MERGE:
       case actionTypes.SET: {
         const depth = action.depth || 1;
         const key = action.key || [];
         const keyNorm = isArray(key) ? key : key.split('.');
+        const merger = (action.type === actionTypes.MERGE || depth === -1)
+          ? merge
+          : assignDepth.bind(null, depth + keyNorm.length);
 
-        return mergeDepth(
-          depth + keyNorm.length,
+        return merger(
           {},
           state,
           placeDataAtKey(
