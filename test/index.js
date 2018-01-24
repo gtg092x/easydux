@@ -8,6 +8,7 @@ import {
 
 const SET_ARRAY = 'SET_ARRAY';
 const SET_OBJECT = 'SET_OBJECT';
+const SET_OBJECT_AT = 'SET_OBJECT_AT';
 const SET_VALUE = 'SET_VALUE';
 
 const reducer = combineReducers({
@@ -16,6 +17,7 @@ const reducer = combineReducers({
   }),
   object: object({
     SET: SET_OBJECT,
+    SET_AT: SET_OBJECT_AT,
   }),
   value: value({
     SET: SET_VALUE,
@@ -53,6 +55,16 @@ describe('easy dux it.', () => {
     result = selectArray(store.getState());
     assert.equal(result[0], 3);
   });
+  it('values should work', () => {
+    let result;
+    const store = createStore(reducer);
+    store.dispatch({
+      type: SET_VALUE,
+      data: 1,
+    });
+    result = selectValue(store.getState());
+    assert.equal(result, 1);
+  });
   it('objects should work', () => {
     let result;
     const store = createStore(reducer);
@@ -63,7 +75,7 @@ describe('easy dux it.', () => {
     result = selectObject(store.getState());
     assert.equal(result.foo, 'bar');
     store.dispatch({
-      type: SET_OBJECT,
+      type: SET_OBJECT_AT,
       data: 'baz',
       key: 'foo',
     });
@@ -78,7 +90,7 @@ describe('easy dux it.', () => {
     assert.equal(result.foo, 'baz');
 
     store.dispatch({
-      type: SET_OBJECT,
+      type: SET_OBJECT_AT,
       data: baz => baz + 'z',
       key: ['foo'],
     });
@@ -86,7 +98,7 @@ describe('easy dux it.', () => {
     assert.equal(result.foo, 'bazz');
 
     store.dispatch({
-      type: SET_OBJECT,
+      type: SET_OBJECT_AT,
       data: mom => mom + ' + dad',
       key: 'message.hi',
     });
