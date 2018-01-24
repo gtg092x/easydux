@@ -27,11 +27,15 @@ export default (actionTypes, defaultValue = {}) =>
           ? merge
           : assignDepth.bind(null, depth + keyNorm.length);
 
+        const getState = keyNorm.length
+          ? _state => get(_state, keyNorm)
+          : _state => _state;
+
         return merger(
           {},
           state,
           placeDataAtKey(
-            isFunction(action.data) ? action.data(get(state, keyNorm)) : action.data,
+            isFunction(action.data) ? action.data(getState(state)) : action.data,
             keyNorm,
           ),
         );

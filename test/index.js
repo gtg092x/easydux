@@ -72,6 +72,13 @@ describe('easy dux it.', () => {
 
     store.dispatch({
       type: SET_OBJECT,
+      data: baz => ({ foo: 'baz' }),
+    });
+    result = selectObject(store.getState());
+    assert.equal(result.foo, 'baz');
+
+    store.dispatch({
+      type: SET_OBJECT,
       data: baz => baz + 'z',
       key: ['foo'],
     });
