@@ -8,8 +8,10 @@ import {
 
 const SET_ARRAY = 'SET_ARRAY';
 const SET_OBJECT = 'SET_OBJECT';
+const REPLACE_OBJECT = 'REPLACE_OBJECT';
 const SET_VALUE = 'SET_VALUE';
 const FILTER_OBJECT = 'FILTER_OBJECT';
+const MERGE_OBJECT = 'MERGE_OBJECT';
 
 const reducer = combineReducers({
   array: array({
@@ -17,6 +19,8 @@ const reducer = combineReducers({
   }),
   object: object({
     SET: SET_OBJECT,
+    REPLACE: REPLACE_OBJECT,
+    MERGE: MERGE_OBJECT,
     FILTER: FILTER_OBJECT,
   }),
   value: value({
@@ -119,12 +123,34 @@ describe('easy dux it.', () => {
     assert.equal(result.message.hi, 'mom + dad');
 
     store.dispatch({
+      type: SET_OBJECT,
+      data: mom => mom + ' + dad',
+      key: ['message', 'hi'],
+    });
+    result = selectObject(store.getState());
+    assert.equal(result.message.hi, 'mom + dad + dad');
+
+    store.dispatch({
       type: FILTER_OBJECT,
       data: mom => !!mom,
       key: 'message',
     });
     result = selectObject(store.getState());
     assert.deepEqual(result.message, {});
+
+    store.dispatch({
+      type: REPLACE_OBJECT,
+      data: { mynew: { cool: 'state' } },
+    });
+    result = selectObject(store.getState());
+    assert.deepEqual(result, { mynew: { cool: 'state' }});
+
+    store.dispatch({
+      type: MERGE_OBJECT,
+      data: { mynew: {cooler: 'stater'}},
+    });
+    result = selectObject(store.getState());
+    assert.deepEqual(result, { mynew: { cool: 'state', cooler: 'stater' }});
   });
   it('reducer should work', () => {
     createStore(reducer);
