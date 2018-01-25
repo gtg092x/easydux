@@ -19,14 +19,12 @@ export default (actionTypes, defaultValue = {}) =>
   (state = defaultValue, action) => {
     switch (action.type) {
       case actionTypes.MERGE:
-      case actionTypes.SET:
-      case actionTypes.MERGE_AT:
-      case actionTypes.SET_AT: {
+      case actionTypes.SET: {
         const depth = action.depth || 1;
         const key = action.key || [];
         const keyNorm = isArray(key) ? key : key.split('.');
         const merger = (
-          action.type === actionTypes.MERGE || action.type === actionTypes.MERGE_AT || depth === -1
+          action.type === actionTypes.MERGE || depth === -1
         )
           ? merge
           : assignDepth.bind(null, depth + keyNorm.length);
@@ -54,4 +52,3 @@ export default (actionTypes, defaultValue = {}) =>
         return state;
     }
   };
-

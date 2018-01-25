@@ -93,9 +93,9 @@ const myValueReducer = value({
 
 ### Value Actions
 
-- `type`: `SET` Sets reducer state.
-  - `data`: *state | (state, action) => state*: `state` or `function<newState>(state, action)`
-- `type`: `CLEAR` Sets reducer to default.
+- **type**: `SET` Sets reducer state.
+  - **data**: `state` | `function<newState>(state, action)`
+- **type**: `CLEAR` Sets reducer to default.
 
 
 ```js
@@ -162,48 +162,48 @@ const myArrayReducer = array({
 
 ### Array Actions
 
-- `type`: `SET` Sets reducer state.
-  - `data`: *value | (state, action) => value*: `state` or `function<newState>(state, action)`
-  - `...post-processors`: [see below](#optional-post-processors)
-- `type`: `CLEAR` Sets reducer to default.
-- `type`: `SET_AT` Sets value at index.
-  - `index`: *number*: index of value to be changed
-  - `data`: *value | (state[index], action, state) => value*: `state` or `function<newState>(state[index], action, state)`
-  - `...post-processors`: [see below](#optional-post-processors)
-- `type`: `INSERT_AT` Inserts value at index, adding one element to the state.
-  - `index`: *number*: index of new value
-  - `data`: *value | (null, action, state) => value*: `state` or `function<newState>(null, action, state)`
-  - `...post-processors`: [see below](#optional-post-processors)
-- `type`: `PUSH` Adds value to end of state.
-  - `data`: *value | (null, action, state) => value*: `state` or `function<newState>(null, action, state)`
-  - `...post-processors`: [see below](#optional-post-processors)
-- `type`: `UNSHIFT` Adds value to front of state.
-  - `data`: *value | (null, action, state) => value*: `state` or `function<newState>(null, action, state)`
-  - `...post-processors`: [see below](#optional-post-processors)
-- `type`: `CONCAT` Adds values to end of state.
-  - `data`: *array | (null, action, state) => array*: `state` or `function<newState>(null, action, state)`
-  - `...post-processors`: [see below](#optional-post-processors)
-- `type`: `CONCAT_TO` Adds values to front of state.
-  - `data`: *array | (null, action, state) => array*: `state` or `function<newState>(null, action, state)`
-  - `...post-processors`: [see below](#optional-post-processors)
-- `type`: `POP` Remove value from end of state.
-- `type`: `SHIFT` Remove value from front of state.
-- `type`: `REMOVE_AT` Remove value from index in state.
-  - `index`: *number*: index of removed value
-- `type`: `SLICE` Remove value from slice of state.
-  - `start`: *number*: start of slice *defaults to `0`*
-  - `end`: *number*: end of slice
-- `type`: `MAP` Runs state through `lodash/map`.
-  - `data`: *string | (element, index, state) => value*: passed to `lodash/map`
-- `type`: `FILTER` Runs state through `lodash/filter`.
-  - `data`: *object | (element, index, state) => boolean*: passed to `lodash/filter`
+- **type**: `SET` Sets reducer state.
+  - **data**: `state` | `function<newState>(state, action)`
+  - **post-processors**: [see below](#optional-post-processors)
+- **type**: `CLEAR` Sets reducer to default.
+- **type**: `SET_AT` Sets value at index.
+  - **index**: `number`
+  - **data**: `state` | `function<newState>(state[index], action, state)`
+  - **post-processors**: [see below](#optional-post-processors)
+- **type**: `INSERT_AT` Inserts value at index, adding one element to the state.
+  - **index**: `number`: index of new value
+  - **data**: `state` | `function<newState>(null, action, state)`
+  - **post-processors**: [see below](#optional-post-processors)
+- **type**: `PUSH` Adds value to end of state.
+  - **data**: `state` | `function<newState>(null, action, state)`
+  - **post-processors**: [see below](#optional-post-processors)
+- **type**: `UNSHIFT` Adds value to front of state.
+  - **data**: *value | (null, action, state) => value*: `state` or `function<newState>(null, action, state)`
+  - **post-processors**: [see below](#optional-post-processors)
+- **type**: `CONCAT` Adds values to end of state.
+  - **data**: `state` | `function<newState>(null, action, state)`
+  - **post-processors**: [see below](#optional-post-processors)
+- **type**: `CONCAT_TO` Adds values to front of state.
+  - **data**: `state` | `function<newState>(null, action, state)`
+  - **post-processors**: [see below](#optional-post-processors)
+- **type**: `POP` Remove value from end of state.
+- **type**: `SHIFT` Remove value from front of state.
+- **type**: `REMOVE_AT` Remove value from index in state.
+  - **index**: `number`: index of removed value
+- **type**: `SLICE` Remove value from slice of state.
+  - **start**: `number`: start of slice *defaults to `0`*
+  - **end**: `number`: end of slice
+- **type**: `MAP` Runs state through `lodash/map`.
+  - **data**: `string` | `function<value>(element, index, state)`: passed to `lodash/map`
+- **type**: `FILTER` Runs state through `lodash/filter`.
+  - **data**: `object` | `function<boolean>(element, index, state)`: passed to `lodash/filter`
   
 #### Optional Post-Processors
 
-- `type`: `SET|SET_AT|CONACT|CONCAT_TO|INSERT_AT|PUSH|UNSHIFT` The following keys will post-process the state.
-  - `uniq`: *boolean*: should the new state run through `lodash/uniq` default: `false`
-  - `compact`: *boolean*: should the new state run through `lodash/compact` default: `false`
-  - `sort`: *string|(element) => boolean*: passed to `lodash/sortBy` default: `undefined` (no sort)
+- **type**: `SET|SET_AT|CONACT|CONCAT_TO|INSERT_AT|PUSH|UNSHIFT` The following keys will post-process the state.
+  - **uniq**: `boolean`: should the new state run through `lodash/uniq` default: `false`
+  - **compact**: `boolean`: should the new state run through `lodash/compact` default: `false`
+  - **sort**: `string | function<boolean>(element, index, state)`: passed to `lodash/sortBy` default: `undefined` (no sort)
 
 
 ```js
