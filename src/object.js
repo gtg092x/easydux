@@ -4,48 +4,81 @@ import isFunction from 'lodash/isFunction';
 import omit from 'lodash/omit';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
+import set from 'lodash/set';
+import assign from 'lodash/assign';
+import mapValues from 'lodash/mapValues';
+import mapKeys from 'lodash/mapKeys';
 import assignDepth from './assign';
 
 /**
- * Returns object with only `keyArray` value set to data
+ * Sets data at key without mutating state through key path
+ * @param state
+ * @param keyArr
+ * @param data
  */
-function placeDataAtKey(data, keyArray) {
-  return keyArray.length ? {
-    [keyArray[0]]: placeDataAtKey(data, keyArray.slice(1)),
-  } : data;
-}
+const setCopy = (state, keyArr, data) => (
+  keyArr.length ? assign({}, state, {
+    [keyArr[0]]: setCopy(state[keyArr[0]], keyArr.slice(1), data),
+  }) : data
+);
 
 export default (actionTypes, defaultValue = {}) =>
   (state = defaultValue, action) => {
+    const key = action.key || [];
+    const keyNorm = isArray(key) ? key : key.split('.');
+
+    const getState = keyNorm.length
+      ? () => get(state, keyNorm)
+      : () => state;
+
+    const getData = () => (
+      isFunction(action.data)
+        ? action.data(getState(), action, state)
+        : action.data
+    );
+
+    const getResult = () => {
+      const data = getData();
+      return keyNorm.length ? set(
+        {},
+        keyNorm,
+        data,
+      ) : data;
+    };
+
     switch (action.type) {
       case actionTypes.MERGE:
       case actionTypes.SET: {
         const depth = action.depth || 1;
-        const key = action.key || [];
-        const keyNorm = isArray(key) ? key : key.split('.');
         const merger = (
-          action.type === actionTypes.MERGE || depth === -1
+          action.type === actionTypes.MERGE || depth < -1
         )
           ? merge
           : assignDepth.bind(null, depth + keyNorm.length);
 
-        const getState = keyNorm.length
-          ? _state => get(_state, keyNorm)
-          : _state => _state;
-
+        const result = getResult();
         return merger(
           {},
           state,
-          placeDataAtKey(
-            isFunction(action.data) ? action.data(getState(state), action, state) : action.data,
-            keyNorm,
-          ),
+          result,
         );
       }
-      case actionTypes.FILTER:
-        return isArray(action.data) ? omitBy(state, action.data) : omit(state, action);
+      case actionTypes.FILTER: {
+        const data = isFunction(action.data)
+          ? omitBy(getState(), action.data)
+          : omit(getState(), action);
+        return setCopy(state, keyNorm, data);
+      }
+      case actionTypes.MAP_VALUES: {
+        const data = mapValues(getState(), action.data);
+        return setCopy(state, keyNorm, data);
+      }
+      case actionTypes.MAP_KEYS: {
+        const data = mapKeys(getState(), action.data);
+        return setCopy(state, keyNorm, data);
+      }
       case actionTypes.REPLACE:
-        return isFunction(action.data) ? action.data(state, action) : action.data;
+        return keyNorm.length ? assign({}, state, getResult()) : getResult();
       case actionTypes.CLEAR:
         return defaultValue;
       default:

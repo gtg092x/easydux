@@ -35,21 +35,9 @@ store.getState();
 
 ```
 
-## Values
-
-Value reducers.
-
-## Arrays
-
-Array reducers.
-
-## Objects
-
-Object reducers. Action behavior is similar to `React.Component().setState`.
-
 ## Integrating Reducers
 
-These are just reducers. You should have no problem calling them like this:
+These are just reducers. You could even call them like this:
 
 ```js
 const myObjectReducer = object({
@@ -65,6 +53,21 @@ function myReducer(state, action) {
       return myObjectReducer(state, action);  
   }
 }
+``` 
+
+You'll likely just include them with `combineReducers` like this though.
+
+```js
+const myObjectReducer = object({
+  SET: 'SET_ACTION_TYPE',
+  CLEAR: 'CLEAR_ACTION_TYPE',
+});
+
+const reducer = combineReducers({
+  reducerKey: myObjectReducer,
+});
+
+createStore(reducer);
 ``` 
 
 ## Api
@@ -143,49 +146,71 @@ Returns a reducer that sets or clears a single value.
 import { array } from 'easydux';
 
 const myArrayReducer = array({
-  SET: 'SET_ARRAY_TYPE',
-  CLEAR: 'CLEAR_ARRAY_TYPE',
-  SET_AT: 'SET_AT_ARRAY_TYPE',
-  INSERT_AT: 'INSERT_AT_ARRAY_TYPE',
-  PUSH: 'PUSH_ARRAY_TYPE',
-  UNSHIFT: 'UNSHIFT_ARRAY_TYPE',
-  CONCAT: 'CONCAT_ARRAY_TYPE',
-  CONCAT_TO: 'CONCAT_TO_ARRAY_TYPE',
-  POP: 'POP_ARRAY_TYPE',
-  SHIFT: 'SHIFT_ARRAY_TYPE',
-  REMOVE_AT: 'REMOVE_AT_ARRAY_TYPE',
-  SLICE: 'SLICE_ARRAY_TYPE',
-  MAP: 'MAP_ARRAY_TYPE',
-  FILTER: 'FILTER_ARRAY_TYPE',
+  SET: 'SET_ARRAY',
+  CLEAR: 'CLEAR_ARRAY',
+  SET_AT: 'SET_AT_ARRAY',
+  INSERT_AT: 'INSERT_AT_ARRAY',
+  PUSH: 'PUSH_ARRAY',
+  UNSHIFT: 'UNSHIFT_ARRAY',
+  CONCAT: 'CONCAT_ARRAY',
+  CONCAT_TO: 'CONCAT_TO_ARRAY',
+  POP: 'POP_ARRAY',
+  SHIFT: 'SHIFT_ARRAY',
+  REMOVE_AT: 'REMOVE_AT_ARRAY',
+  SLICE: 'SLICE_ARRAY',
+  MAP: 'MAP_ARRAY',
+  FILTER: 'FILTER_ARRAY',
 });
 ```
 
 ### Array Actions
 
+```js
+import { array } from 'easydux';
+import { createStore } from 'redux';
+
+const reducer = array({
+  SET: 'MY_ARRAY_SET',
+});
+
+const store = createStore(reducer);
+
+store.dispatch({
+  type: 'MY_ARRAY_SET',
+  data: ['new', 'state', 'new', null],
+  uniq: true, // optional
+  compact: true, // optional
+  sort: item => -item.length,
+});
+
+store.getState();
+// [ 'state', 'new' ]
+```
+
 - **type**: `SET` Sets reducer state.
   - **data**: `state` | `function<newState>(state, action)`
-  - **post-processors**: [see below](#optional-post-processors)
+  - **...post-processors**: [see below](#optional-post-processors)
 - **type**: `CLEAR` Sets reducer to default.
 - **type**: `SET_AT` Sets value at index.
   - **index**: `number`
   - **data**: `state` | `function<newState>(state[index], action, state)`
-  - **post-processors**: [see below](#optional-post-processors)
+  - **...post-processors**: [see below](#optional-post-processors)
 - **type**: `INSERT_AT` Inserts value at index, adding one element to the state.
   - **index**: `number`: index of new value
   - **data**: `state` | `function<newState>(null, action, state)`
-  - **post-processors**: [see below](#optional-post-processors)
+  - **...post-processors**: [see below](#optional-post-processors)
 - **type**: `PUSH` Adds value to end of state.
   - **data**: `state` | `function<newState>(null, action, state)`
-  - **post-processors**: [see below](#optional-post-processors)
+  - **...post-processors**: [see below](#optional-post-processors)
 - **type**: `UNSHIFT` Adds value to front of state.
   - **data**: *value | (null, action, state) => value*: `state` or `function<newState>(null, action, state)`
-  - **post-processors**: [see below](#optional-post-processors)
+  - **...post-processors**: [see below](#optional-post-processors)
 - **type**: `CONCAT` Adds values to end of state.
   - **data**: `state` | `function<newState>(null, action, state)`
-  - **post-processors**: [see below](#optional-post-processors)
+  - **...post-processors**: [see below](#optional-post-processors)
 - **type**: `CONCAT_TO` Adds values to front of state.
   - **data**: `state` | `function<newState>(null, action, state)`
-  - **post-processors**: [see below](#optional-post-processors)
+  - **...post-processors**: [see below](#optional-post-processors)
 - **type**: `POP` Remove value from end of state.
 - **type**: `SHIFT` Remove value from front of state.
 - **type**: `REMOVE_AT` Remove value from index in state.
@@ -209,20 +234,202 @@ const myArrayReducer = array({
 ```js
 
 const mySetArrayActionCreator = data => ({
-  type: 'SET_ARRAY_TYPE',
-  data: ['new data'],
+  type: 'SET_ARRAY',
+  data: ['new', 'data'],
 });
 
 // or
 
 const mySetArrayActionCreator = data => ({
-  type: 'SET_ARRAY_TYPE',
-  data: state => ['new data'],
+  type: 'SET_ARRAY',
+  data: state => ['new', 'data'],
 });
 
 const myClearArrayActionCreator = data => ({
-  type: 'CLEAR_ARRAY_TYPE',
+  type: 'CLEAR_ARRAY',
 });
 
+const mySetAtActionCreator = data => ({
+  type: 'SET_AT_ARRAY',
+  index: 1,
+  data: oldVal => 'newVal',
+});
+
+const myInsertAtActionCreator = data => ({
+  type: 'INSERT_AT_ARRAY',
+  index: 1,
+  data: () => 'newVal',
+});
+
+const myPushActionCreator = data => ({
+  type: 'PUSH_ARRAY',
+  data: 'newVal at end',
+});
+
+const myUnshiftActionCreator = data => ({
+  type: 'UNSHIFT_ARRAY',
+  data: 'newVal at front',
+});
+
+const myConcatActionCreator = data => ({
+  type: 'CONCAT_ARRAY',
+  data: ['newVal 1 at end', 'newVal 2 at end'],
+});
+
+const myConcatToActionCreator = data => ({
+  type: 'CONCAT_AT_ARRAY',
+  data: ['newVal 1 at start', 'newVal 2 at start'],
+});
+
+const myPopActionCreator = data => ({
+  type: 'POP_ARRAY',
+});
+
+const myShiftActionCreator = data => ({
+  type: 'SHIFT_ARRAY',
+});
+
+const myRemoveAtActionCreator = data => ({
+  type: 'REMOVE_AT_ARRAY',
+  index: 1,
+});
+
+const mySliceActionCreator = data => ({
+  type: 'SLICE_ARRAY',
+  start: 1,
+  end: -1,
+});
+
+const myMapActionCreator = data => ({
+  type: 'MAP_ARRAY',
+  data: element => element,
+});
+
+const myFilterActionCreator = data => ({
+  type: 'FILTER_ARRAY',
+  data: element => !!element,
+});
+
+```
+
+### `object(actionTypes, default)`
+
+Returns a reducer that sets or clears a single value.
+
+- `actionTypes`: *object* no single type is required
+  - `SET`: *string* the action type to assign the state
+  - `CLEAR`: *string* the action type to clear the state
+  - `MERGE`: *string* the action type to merge the state
+  - `REPLACE`: *string* the action type to replace the state
+  - `FILTER`: *string* the action type to remove properties from the state
+  - `MAP_VALUES`: *string* the action type to map state values
+  - `MAP_KEYS`: *string* the action type to map state keys
+- `default`: *object* default state - will be reset to this state on `CLEAR` *defaults to {}*
+
+```js
+import { object } from 'easydux';
+
+const myObjectReducer = object({
+  SET: 'SET_OBJECT',
+  CLEAR: 'CLEAR_OBJECT',
+  MERGE: 'MERGE_OBJECT',
+  REPLACE: 'REPLACE_OBJECT',
+  FILTER: 'FILTER_OBJECT',
+  MAP_VALUES: 'MAP_VALUES_OBJECT',
+  MAP_KEYS: 'MAP_KEYS_OBJECT',
+});
+```
+
+### Object Actions
+
+```js
+import { object } from 'easydux';
+import { createStore } from 'redux';
+
+const reducer = object({
+  SET: 'MY_OBJECT_SET',
+});
+
+const store = createStore(reducer);
+
+store.dispatch({
+  type: 'MY_OBJECT_SET',
+  data: { hi: { mom: "I'm on TV!" } },
+});
+
+store.getState();
+// { "hi": { "mom": "I'm on TV!" } }
+
+store.dispatch({
+  type: 'MY_OBJECT_SET',
+  data: onWhere => onWhere.replace('TV', 'github'),
+  key: 'hi.mom',
+  depth: 2, // optional
+});
+
+store.getState();
+// { "hi": { "mom": "I'm on github!" } }
+```
+
+- **type**: `SET` Sets reducer state.
+  - **data**: `state` | `function<newState>(state, action)`
+  - **...object-config**: [see below](#optional-object-config)
+- **type**: `MERGE` Merges reducer state.
+  - **data**: `state` | `function<newState>(state, action)`
+  - **...object-config**: [see below](#optional-object-config)
+- **type**: `REPLACE` Replaces reducer state.
+  - **data**: `state` | `function<newState>(state, action)`
+  - **...object-config**: [see below](#optional-object-config)
+- **type**: `MAP_VALUES` Runs state through `lodash/mapValues`.
+  - **data**: `function<value>(element, key, state)`: passed to `lodash/mapValues`
+  - **key**: [see below](#object-key)
+- **type**: `MAP_KEYS` Runs state through `lodash/mapKeys`.
+  - **data**: `function<value>(element, key, state)`: passed to `lodash/mapKeys`
+  - **key**: [see below](#object-key)
+- **type**: `CLEAR` Sets reducer to default.
+- **type**: `FILTER` Runs state through `lodash/omit` or `lodash/omitBy`.
+  - **data**: `array` | `function<boolean>(element, index, state)`: passed to `lodash/omit` for arrays and `lodash/omitBy` for functions
+  - **key**: [see below](#object-key)
+  
+#### Optional Post-Processors
+
+- **type**: `SET|SET_AT|CONACT|CONCAT_TO|INSERT_AT|PUSH|UNSHIFT` The following keys will post-process the state.
+  - **uniq**: `boolean`: should the new state run through `lodash/uniq` default: `false`
+  - **compact**: `boolean`: should the new state run through `lodash/compact` default: `false`
+  - **sort**: `string | function<boolean>(element, index, state)`: passed to `lodash/sortBy` default: `undefined` (no sort)
+
+
+```js
+
+const mySetObjectActionCreator = data => ({
+  type: 'SET_OBJECT',
+  data: { hello: 'world' },
+});
+
+// or
+
+const mySetObjectActionCreator = data => ({
+  type: 'SET_OBJECT',
+  data: state => ({ hello: 'world' }),
+});
+
+const myMergeObjectActionCreator = data => ({
+  type: 'MERGE_OBJECT',
+  data: state => ({ hello: 'world' }),
+});
+
+const myReplaceObjectActionCreator = data => ({
+  type: 'REPLACE_OBJECT',
+  data: state => ({ hello: 'world' }),
+});
+
+const myClearObjectActionCreator = data => ({
+  type: 'CLEAR_OBJECT',
+});
+
+const myFilterActionCreator = data => ({
+  type: 'FILTER_OBJECT',
+  data: element => !!element,
+});
 
 ```

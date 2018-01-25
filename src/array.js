@@ -17,44 +17,53 @@ export default (actionTypes, defaultValue = []) =>
       processors.push(_state => sortBy(_state, action.sort));
     }
     const processor = flow(...processors);
+
+    // indy was the dog's name
+    const indy = () => (action.index + state.length) % state.length;
+    const actionNew = () =>
+      (isFunction(action.data) ? action.data(null, action, state) : action.data);
+    const actionSet = () => (isFunction(action.data) ? action.data(state, action) : action.data);
+    const actionSetOne = () =>
+      (isFunction(action.data) ? action.data(state[indy()], action, state) : action.data);
+
     switch (action.type) {
       case actionTypes.SET_AT:
         return processor([
-          ...state.slice(0, action.index),
-          isFunction(action.data) ? action.data(state[action.index], action, state) : action.data,
-          ...state.slice(action.index + 1),
+          ...state.slice(0, indy()),
+          actionSetOne(),
+          ...state.slice(indy() + 1),
         ]);
       case actionTypes.INSERT_AT:
         return processor([
-          ...state.slice(0, action.index),
-          isFunction(action.data) ? action.data(null, state, action) : action.data,
-          ...state.slice(action.index),
+          ...state.slice(0, indy()),
+          actionNew(),
+          ...state.slice(indy()),
         ]);
       case actionTypes.REMOVE_AT:
         return [
-          ...state.slice(0, action.index),
-          ...state.slice(action.index + 1),
+          ...state.slice(0, indy()),
+          ...state.slice(indy() + 1),
         ];
       case actionTypes.SLICE:
         return state.slice(action.start || 0, action.end);
       case actionTypes.PUSH:
         return processor([
           ...state,
-          isFunction(action.data) ? action.data(null, state, action) : action.data,
+          actionNew(),
         ]);
       case actionTypes.CONCAT:
         return processor([
           ...state,
-          ...isFunction(action.data) ? action.data(null, state, action) : action.data,
+          ...actionNew(),
         ]);
       case actionTypes.CONCAT_TO:
         return processor([
-          ...isFunction(action.data) ? action.data(null, state, action) : action.data,
+          ...actionNew(),
           ...state,
         ]);
       case actionTypes.UNSHIFT:
         return processor([
-          isFunction(action.data) ? action.data(null, state, action) : action.data,
+          actionNew(),
           ...state,
         ]);
       case actionTypes.SHIFT:
@@ -70,7 +79,7 @@ export default (actionTypes, defaultValue = []) =>
       case actionTypes.MAP:
         return state.map(action.data);
       case actionTypes.SET:
-        return processor(isFunction(action.data) ? action.data(state, action) : action.data);
+        return processor(actionSet());
       case actionTypes.CLEAR:
         return defaultValue;
       default:

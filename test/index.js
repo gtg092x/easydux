@@ -8,8 +8,8 @@ import {
 
 const SET_ARRAY = 'SET_ARRAY';
 const SET_OBJECT = 'SET_OBJECT';
-const SET_OBJECT_AT = 'SET_OBJECT_AT';
 const SET_VALUE = 'SET_VALUE';
+const FILTER_OBJECT = 'FILTER_OBJECT';
 
 const reducer = combineReducers({
   array: array({
@@ -17,7 +17,7 @@ const reducer = combineReducers({
   }),
   object: object({
     SET: SET_OBJECT,
-    SET_AT: SET_OBJECT_AT,
+    FILTER: FILTER_OBJECT,
   }),
   value: value({
     SET: SET_VALUE,
@@ -54,6 +54,19 @@ describe('easy dux it.', () => {
     });
     result = selectArray(store.getState());
     assert.equal(result[0], 3);
+
+    store.dispatch({
+      type: SET_ARRAY,
+      data: ['new', 'state', 'new', null],
+      uniq: true, // optional
+      compact: true, // optional
+      sort: item => -item.length,
+    });
+
+    result = selectArray(store.getState());
+    assert.equal(result[0], 'state');
+    assert.equal(result[1], 'new');
+
   });
   it('values should work', () => {
     let result;
@@ -75,7 +88,7 @@ describe('easy dux it.', () => {
     result = selectObject(store.getState());
     assert.equal(result.foo, 'bar');
     store.dispatch({
-      type: SET_OBJECT_AT,
+      type: SET_OBJECT,
       data: 'baz',
       key: 'foo',
     });
@@ -90,7 +103,7 @@ describe('easy dux it.', () => {
     assert.equal(result.foo, 'baz');
 
     store.dispatch({
-      type: SET_OBJECT_AT,
+      type: SET_OBJECT,
       data: baz => baz + 'z',
       key: ['foo'],
     });
@@ -98,12 +111,20 @@ describe('easy dux it.', () => {
     assert.equal(result.foo, 'bazz');
 
     store.dispatch({
-      type: SET_OBJECT_AT,
+      type: SET_OBJECT,
       data: mom => mom + ' + dad',
       key: 'message.hi',
     });
     result = selectObject(store.getState());
     assert.equal(result.message.hi, 'mom + dad');
+
+    store.dispatch({
+      type: FILTER_OBJECT,
+      data: mom => !!mom,
+      key: 'message',
+    });
+    result = selectObject(store.getState());
+    assert.deepEqual(result.message, {});
   });
   it('reducer should work', () => {
     createStore(reducer);
