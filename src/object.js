@@ -57,6 +57,11 @@ export default (actionTypes, defaultValue = {}) =>
           : assignDepth.bind(null, depth + keyNorm.length);
 
         const result = getResult();
+
+        if (depth + keyNorm.length === 0) {
+          return result;
+        }
+
         return merger(
           {},
           state,

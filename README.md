@@ -371,15 +371,18 @@ store.getState();
 // { "hi": { "mom": "I'm on github!" } }
 ```
 
-- **type**: `SET` Sets reducer state.
+- **type**: `SET` Sets reducer state. Set behavior tries to imitate `React.Component().setState`
   - **data**: `state` | `function<newState>(state, action)`
-  - **...object-config**: [see below](#optional-object-config)
-- **type**: `MERGE` Merges reducer state.
+    - whatever is passed to the reducer is merged with the state one level deep.
+      - If a function is passed to data, state will be passed as that function's first argument and the result will be merged with the current state.
+  - **depth**: `number`: the depth of the merge data will have with original state. *defaults* to `1`
+  - **key**: [see below](#object-key)
+- **type**: `MERGE` Merges reducer state. Uses `lodash/merge`.
   - **data**: `state` | `function<newState>(state, action)`
-  - **...object-config**: [see below](#optional-object-config)
+  - **key**: [see below](#object-key)
 - **type**: `REPLACE` Replaces reducer state.
   - **data**: `state` | `function<newState>(state, action)`
-  - **...object-config**: [see below](#optional-object-config)
+  - **key**: [see below](#object-key)
 - **type**: `MAP_VALUES` Runs state through `lodash/mapValues`.
   - **data**: `function<value>(element, key, state)`: passed to `lodash/mapValues`
   - **key**: [see below](#object-key)
@@ -390,14 +393,6 @@ store.getState();
 - **type**: `FILTER` Runs state through `lodash/omit` or `lodash/omitBy`.
   - **data**: `array` | `function<boolean>(element, index, state)`: passed to `lodash/omit` for arrays and `lodash/omitBy` for functions
   - **key**: [see below](#object-key)
-  
-#### Optional Post-Processors
-
-- **type**: `SET|SET_AT|CONACT|CONCAT_TO|INSERT_AT|PUSH|UNSHIFT` The following keys will post-process the state.
-  - **uniq**: `boolean`: should the new state run through `lodash/uniq` default: `false`
-  - **compact**: `boolean`: should the new state run through `lodash/compact` default: `false`
-  - **sort**: `string | function<boolean>(element, index, state)`: passed to `lodash/sortBy` default: `undefined` (no sort)
-
 
 ```js
 
@@ -433,3 +428,45 @@ const myFilterActionCreator = data => ({
 });
 
 ```
+
+#### Object-key
+
+- **key**: `string` | `array`: A key to target in the reducer state.
+
+The same kind of argument you would pass to `lodash/get`. `key` contextualizes your action around a certain value in an object - passing the value of this key in the object to your data function and then setting the data (or the result of the data function) at the key in the object.
+
+```js
+const reducer = object({
+  SET: 'MY_OBJECT_SET',
+});
+
+const store = createStore(reducer, {
+  hello: {
+    my: 'honey',
+  },
+});
+
+store.dispatch({
+  type: 'MY_OBJECT_SET',
+  data: ({ my }) => ({ my: 'baby' }),
+  key: 'hello',
+})
+
+store.getState();
+// { hello: { my: 'baby' } }
+
+// or
+
+store.dispatch({
+  type: 'MY_OBJECT_SET',
+  data: honey => 'baby', // or just data: 'baby'
+  key: 'hello.my', // or ['hello', 'my']
+})
+
+store.getState();
+// { hello: { my: 'baby' } }
+```
+
+## License
+
+`easydux` is free software under the MIT license.
