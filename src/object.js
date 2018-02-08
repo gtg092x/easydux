@@ -4,7 +4,6 @@ import isFunction from 'lodash/isFunction';
 import omit from 'lodash/omit';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
-import set from 'lodash/set';
 import assign from 'lodash/assign';
 import mapValues from 'lodash/mapValues';
 import mapKeys from 'lodash/mapKeys';
@@ -39,7 +38,7 @@ export default (actionTypes, defaultValue = {}) =>
 
     const getResult = () => {
       const data = getData();
-      return keyNorm.length ? set(
+      return keyNorm.length ? setCopy(
         {},
         keyNorm,
         data,

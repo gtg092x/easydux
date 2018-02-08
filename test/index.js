@@ -131,6 +131,14 @@ describe('easy dux it.', () => {
     assert.equal(result.message.hi, 'mom + dad + dad');
 
     store.dispatch({
+      type: SET_OBJECT,
+      data: () => 'bob',
+      key: 'message.test.again.yes',
+    });
+    result = selectObject(store.getState());
+    assert.equal(result.message.test.again.yes, 'bob');
+
+    store.dispatch({
       type: FILTER_OBJECT,
       data: mom => !!mom,
       key: 'message',
