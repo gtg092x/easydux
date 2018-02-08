@@ -160,6 +160,26 @@ describe('easy dux it.', () => {
     result = selectObject(store.getState());
     assert.deepEqual(result, { mynew: { cool: 'state', cooler: 'stater' }});
   });
+  it('should update object on deep changes', () => {
+    const store = createStore(reducer);
+    const key = 'hello.bea.ut.i.ful';
+    store.dispatch({
+      type: SET_OBJECT,
+      data: ({ to: 'world'}),
+      key,
+    });
+    const obj = store.getState().object;
+    const hello = obj.hello;
+    store.dispatch({
+      type: SET_OBJECT,
+      data: ({ to: 'country'}),
+      key,
+    });
+    const nextObj = store.getState().object;
+    const nextHello = nextObj.hello;
+    assert(obj !== nextObj, 'Objects are equal');
+    assert(hello !== nextHello, 'Hellos are equal');
+  });
   it('reducer should work', () => {
     createStore(reducer);
   });

@@ -2,7 +2,7 @@ import keys from 'lodash/keys';
 import assign from 'lodash/assign';
 import isObject from 'lodash/isObject';
 
-export default function assignDepth(depth, target, ...sources) {
+export default function copyDepth(depth, target, ...sources) {
   if (isObject(target)) {
     sources.forEach((source) => {
       if (isObject(source)) {
@@ -13,7 +13,7 @@ export default function assignDepth(depth, target, ...sources) {
                 assign(target, { [key]: source[key] });
               } else {
                 // eslint-disable-next-line no-param-reassign
-                target[key] = assignDepth(depth - 1, target[key], source[key]);
+                target[key] = copyDepth(depth - 1, {}, target[key], source[key]);
               }
             } else {
               assign(target, { [key]: source[key] });

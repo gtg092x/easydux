@@ -7,7 +7,7 @@ import merge from 'lodash/merge';
 import assign from 'lodash/assign';
 import mapValues from 'lodash/mapValues';
 import mapKeys from 'lodash/mapKeys';
-import assignDepth from './assign';
+import copyDepth from './copy';
 
 /**
  * Sets data at key without mutating state through key path
@@ -15,11 +15,15 @@ import assignDepth from './assign';
  * @param keyArr
  * @param data
  */
-const setCopy = (state, keyArr, data) => (
-  keyArr.length ? assign({}, state, {
-    [keyArr[0]]: setCopy(state[keyArr[0]], keyArr.slice(1), data),
-  }) : data
-);
+const setCopy = (state, keyArr, data) => {
+  if (keyArr.length) {
+    const val = state ? state[keyArr[0]] : state;
+    return assign({}, state, {
+      [keyArr[0]]: setCopy(val, keyArr.slice(1), data),
+    });
+  }
+  return data;
+};
 
 export default (actionTypes, defaultValue = {}) =>
   (state = defaultValue, action) => {
@@ -53,7 +57,7 @@ export default (actionTypes, defaultValue = {}) =>
           action.type === actionTypes.MERGE || depth < -1
         )
           ? merge
-          : assignDepth.bind(null, depth + keyNorm.length);
+          : copyDepth.bind(null, depth + keyNorm.length);
 
         const result = getResult();
 
