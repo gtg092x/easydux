@@ -163,6 +163,13 @@ describe('easy dux it.', () => {
   it('should update object on deep changes', () => {
     const store = createStore(reducer);
     const key = 'hello.bea.ut.i.ful';
+    const key2 = 'hello.bei.ut';
+    store.dispatch({
+      type: SET_OBJECT,
+      data: ({ to: 'beirut?'}),
+      key: key2,
+    });
+    const beaut = store.getState().object.hello.bei.ut;
     store.dispatch({
       type: SET_OBJECT,
       data: ({ to: 'world'}),
@@ -177,8 +184,10 @@ describe('easy dux it.', () => {
     });
     const nextObj = store.getState().object;
     const nextHello = nextObj.hello;
+    const nextBeaut = store.getState().object.hello.bei.ut;
     assert(obj !== nextObj, 'Objects are equal');
     assert(hello !== nextHello, 'Hellos are equal');
+    assert(beaut === nextBeaut, 'untouched objs arent equal');
   });
   it('reducer should work', () => {
     createStore(reducer);
