@@ -15,7 +15,7 @@ import copyDepth from './copy';
  * @param keyArr
  * @param data
  */
-const setCopy = (state, keyArr, data) => {
+export const setCopy = (state, keyArr, data) => {
   if (keyArr.length) {
     const val = state ? state[keyArr[0]] : state;
     return assign({}, state, {

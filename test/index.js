@@ -6,6 +6,7 @@ import {
   object,
   array,
 } from '../src';
+import copyDepth from '../src/copy'
 
 const SET_ARRAY = 'SET_ARRAY';
 const SET_OBJECT = 'SET_OBJECT';
@@ -34,6 +35,18 @@ const selectObject = state => state.object;
 const selectArray = state => state.array;
 
 describe('easy dux it.', () => {
+  it('copy shouldnt break', () => {
+    const c = copyDepth(2,
+      {},
+      {
+        locale: 'en',
+        ageInterests: [1, 2, 3, 4, 5, 6, 7],
+      },
+      {
+        ageInterests: [1, 2, 3, 4, 5, 6, 7],
+      },
+    );
+  });
   it('arrays should work', () => {
     let result;
     const store = createStore(reducer);
