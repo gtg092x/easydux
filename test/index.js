@@ -1,5 +1,6 @@
 import { assert } from 'chai';
 import { createStore, combineReducers } from 'redux';
+import get from 'lodash.get';
 import {
   value,
   object,
@@ -188,6 +189,25 @@ describe('easy dux it.', () => {
     assert(obj !== nextObj, 'Objects are equal');
     assert(hello !== nextHello, 'Hellos are equal');
     assert(beaut === nextBeaut, 'untouched objs arent equal');
+  });
+  it('should update object and not destruct array', () => {
+    const store = createStore(reducer);
+
+    store.dispatch({
+      type: SET_OBJECT,
+      data: 'no thanks',
+      key: 'hello.config',
+    });
+
+    const key = 'hello.array';
+    const data = [1, 2, 3];
+    store.dispatch({
+      type: SET_OBJECT,
+      data,
+      key: key,
+    });
+    const nextState = store.getState().object;
+    assert(Array.isArray(get(nextState, key)));
   });
   it('reducer should work', () => {
     createStore(reducer);
