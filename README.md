@@ -126,6 +126,7 @@ const myClearValueActionCreator = data => ({
 Returns a reducer that sets or clears a single value.
 
 - `actionTypes`: *object* no single type is required
+  - `UPDATE`: *string* uses package immutability-helper to set new state
   - `SET`: *string* the action type to set the state
   - `CLEAR`: *string* the action type to clear the state
   - `SET_AT`: *string* the action type to set a single item in the state
@@ -146,6 +147,7 @@ Returns a reducer that sets or clears a single value.
 import { array } from 'easydux';
 
 const myArrayReducer = array({
+  UPDATE: 'UPDATE_ARRAY',
   SET: 'SET_ARRAY',
   CLEAR: 'CLEAR_ARRAY',
   SET_AT: 'SET_AT_ARRAY',
@@ -187,6 +189,8 @@ store.getState();
 // [ 'state', 'new' ]
 ```
 
+- **type**: `UPDATE` Updates reducer state. See https://github.com/kolodny/immutability-helper
+  - **data**: `config` | `object`
 - **type**: `SET` Sets reducer state.
   - **data**: `state` | `function<newState>(state, action)`
   - **...post-processors**: [see below](#optional-post-processors)
@@ -317,6 +321,7 @@ const myFilterActionCreator = data => ({
 Returns a reducer that sets or clears a single value.
 
 - `actionTypes`: *object* no single type is required
+  - `UPDATE`: *string* the action type to update the state
   - `SET`: *string* the action type to assign the state
   - `CLEAR`: *string* the action type to clear the state
   - `MERGE`: *string* the action type to merge the state
@@ -330,6 +335,7 @@ Returns a reducer that sets or clears a single value.
 import { object } from 'easydux';
 
 const myObjectReducer = object({
+  UPDATE: 'UPDATE_OBJECT',
   SET: 'SET_OBJECT',
   CLEAR: 'CLEAR_OBJECT',
   MERGE: 'MERGE_OBJECT',
@@ -371,6 +377,8 @@ store.getState();
 // { "hi": { "mom": "I'm on github!" } }
 ```
 
+- **type**: `UPDATE` Updates reducer state. See https://github.com/kolodny/immutability-helper
+  - **data**: `config` | `object`
 - **type**: `SET` Sets reducer state. Set behavior tries to imitate `React.Component().setState`
   - **data**: `state` | `function<newState>(state, action)`
     - whatever is passed to the reducer is merged with the state one level deep.

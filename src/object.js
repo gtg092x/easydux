@@ -7,6 +7,7 @@ import merge from 'lodash/merge';
 import assign from 'lodash/assign';
 import mapValues from 'lodash/mapValues';
 import mapKeys from 'lodash/mapKeys';
+import update from 'immutability-helper';
 import copyDepth from './copy';
 
 /**
@@ -50,6 +51,8 @@ export default (actionTypes, defaultValue = {}) =>
     };
 
     switch (action.type) {
+      case actionTypes.UPDATE:
+        return setCopy(state, keyNorm, update(getState(), action.data));
       case actionTypes.MERGE:
       case actionTypes.SET: {
         const depth = action.depth || 1;

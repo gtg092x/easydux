@@ -9,7 +9,9 @@ import {
 import copyDepth from '../src/copy'
 
 const SET_ARRAY = 'SET_ARRAY';
+const UPDATE_ARRAY = 'UPDATE_ARRAY';
 const SET_OBJECT = 'SET_OBJECT';
+const UPDATE_OBJECT = 'UPDATE_OBJECT';
 const REPLACE_OBJECT = 'REPLACE_OBJECT';
 const SET_VALUE = 'SET_VALUE';
 const FILTER_OBJECT = 'FILTER_OBJECT';
@@ -17,9 +19,11 @@ const MERGE_OBJECT = 'MERGE_OBJECT';
 
 const reducer = combineReducers({
   array: array({
+    UPDATE: UPDATE_ARRAY,
     SET: SET_ARRAY,
   }),
   object: object({
+    UPDATE: UPDATE_OBJECT,
     SET: SET_OBJECT,
     REPLACE: REPLACE_OBJECT,
     MERGE: MERGE_OBJECT,
@@ -112,6 +116,36 @@ describe('easy dux it.', () => {
     });
     result = selectObject(store.getState());
     assert.equal(result.foo, 'baz');
+
+    store.dispatch({
+      type: UPDATE_OBJECT,
+      data: { foo: { $set: 'biz' } },
+    });
+    result = selectObject(store.getState());
+    assert.equal(result.foo, 'biz');
+
+    store.dispatch({
+      type: UPDATE_OBJECT,
+      key: 'foo',
+      data: { $set: 'beez' },
+    });
+    result = selectObject(store.getState());
+    assert.equal(result.foo, 'beez');
+
+    store.dispatch({
+      type: UPDATE_OBJECT,
+      key: 'message',
+      data: { hi: { $set: 'dad' }},
+    });
+    result = selectObject(store.getState());
+    assert.equal(result.message.hi, 'dad');
+
+    store.dispatch({
+      type: UPDATE_OBJECT,
+      data: { message: { hi: { $set: 'mom' }}},
+    });
+    result = selectObject(store.getState());
+    assert.equal(result.message.hi, 'mom');
 
     store.dispatch({
       type: SET_OBJECT,

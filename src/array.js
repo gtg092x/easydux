@@ -3,6 +3,7 @@ import uniq from 'lodash/uniq';
 import flow from 'lodash/flow';
 import compact from 'lodash/compact';
 import sortBy from 'lodash/sortBy';
+import update from 'immutability-helper';
 
 export default (actionTypes, defaultValue = []) =>
   (state = defaultValue, action) => {
@@ -27,6 +28,8 @@ export default (actionTypes, defaultValue = []) =>
       (isFunction(action.data) ? action.data(state[indy()], action, state) : action.data);
 
     switch (action.type) {
+      case actionTypes.UPDATE:
+        return update(state, action.data);
       case actionTypes.SET_AT:
         return processor([
           ...state.slice(0, indy()),
